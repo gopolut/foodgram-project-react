@@ -35,9 +35,9 @@ class RecipeAdmin(admin.ModelAdmin):
     )
 
     # возвращает поля, которые доступны только для чтения
-    def get_readonly_fields(self, request, obj=None):
-        f = ['image']
-        return f
+    # def get_readonly_fields(self, request, obj=None):
+    #     f = ['image']
+    #     return
 
     # def get_inlines(self, request, obj=None):
     #     if obj:
