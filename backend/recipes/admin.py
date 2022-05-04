@@ -1,14 +1,24 @@
+from tabnanny import verbose
 from django.contrib import admin
 
-from .models import Recipe, Ingredient, RecipeIngredient
+from .models import Recipe, Ingredient, RecipeIngredient, Tag
 
 
 class InlineIngredient(admin.TabularInline):
     '''Для регистрации встроенного редактора в первичном редакторе или
-    для редактирования родительской модели на странице родительской модели.
+    для редактирования дочерней модели на странице родительской модели.
     '''
     model = Recipe.ingredient.through
     verbose_name = 'Ингредиент'
+
+
+class InlineTag(admin.TabularInline):
+    '''для редактирования дочерней модели Tag
+    на странице родительской модели Recipe
+    '''
+    model = Recipe.tag.through
+    verbose_name = 'Тег'
+
 
 class RecipeAdmin(admin.ModelAdmin):
     '''Редактор модели Recipe - класс,
@@ -17,7 +27,8 @@ class RecipeAdmin(admin.ModelAdmin):
     '''
 
     # набор выводимых полей
-    list_diplay = (
+    list_display = (
+        'pk',
         'name',
         'image',
         'author',
@@ -45,13 +56,14 @@ class RecipeAdmin(admin.ModelAdmin):
     #     else:
     #         return InlineIngredient
 
+    verbose_name = 'Рецепт'
 
     # Перечень полей ForeignKey, ManyToMany, кот. отображаются в виде списка с возможностью поиска
     autocomplete_fields = ('author',)
 
     # задает кортеж со ссылками на классы встроенных редакторов,
     # регистрир. в текущем редакторе
-    inlines = (InlineIngredient, )
+    inlines = (InlineIngredient, InlineTag, )
 
     raw_id_fields = ('author',)
 
@@ -59,7 +71,8 @@ class RecipeAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     '''Редактор модели Ingredient'''
 
-    list_diplay = (
+    list_display = (
+        'pk',
         'id',
         'ingredient',
         'measurement_unit',
@@ -71,14 +84,25 @@ class IngredientAdmin(admin.ModelAdmin):
 class RecipeIngredientAdmin(admin.ModelAdmin):
     '''Редактор модели RecipeIngredient'''
 
-    list_diplay = (
-        'id',
+    list_display = (
+        'pk',
         'recipe',
         'ingredient',
         'quantity',
     )
 
 
+class TagAdmin(admin.ModelAdmin):
+    '''Редактор модели Tag'''
+
+    list_display = (
+        'pk',
+        'name',
+        'color',
+        'slug',
+    )
+
 admin.site.register(Recipe, RecipeAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(RecipeIngredient, RecipeIngredientAdmin)
+# admin.site.register(RecipeIngredient, RecipeIngredientAdmin)
+admin.site.register(Tag, TagAdmin)

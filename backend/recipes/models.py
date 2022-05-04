@@ -7,8 +7,15 @@ COLOR_CHOICES =(
     ('#E26C2D', 'Оранжевый'),
     ('#00ff00', 'Зеленый'),
     ('#3b2fff', 'Синий'),
+    ('#540099', 'Фиолетовый')
 )
 
+TAG_CHOICES =(
+    ('breakfast', 'Завтрак'),
+    ('lunch', 'Ланч'),
+    ('dinner', 'Обед'),
+    ('supper', 'Ужин'),
+)
 
 class Ingredient(models.Model):
     ingredient = models.CharField(
@@ -27,7 +34,8 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     name = models.CharField(
         max_length=200,
-        verbose_name='Название тега'
+        verbose_name='Название тега',
+        choices=TAG_CHOICES,
     )
     color = models.CharField(
         max_length=7,
@@ -35,7 +43,8 @@ class Tag(models.Model):
         verbose_name='Цвет тега'
     )
     slug = models.SlugField(
-        unique=True, default='-пусто-',
+        unique=True,
+        default='-пусто-',
         verbose_name='URL тега'
     )
     
