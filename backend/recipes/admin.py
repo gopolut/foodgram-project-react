@@ -1,3 +1,14 @@
+from unittest import mock
 from django.contrib import admin
 
-# Register your models here.
+from .models import Recipe
+
+class RecipesAdmin(admin.ModelAdmin):
+    '''  '''
+
+    list_diplay = (
+        'name',
+        'image',
+        'text',
+        'cooking_time',
+    )
