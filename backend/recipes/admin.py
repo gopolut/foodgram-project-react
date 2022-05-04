@@ -12,3 +12,5 @@ class RecipesAdmin(admin.ModelAdmin):
         'text',
         'cooking_time',
     )
+
+admin.site.register(Recipe, RecipesAdmin)
