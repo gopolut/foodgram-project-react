@@ -13,6 +13,9 @@ class Ingredient(models.Model):
         verbose_name='Единица измерения'        
     )
 
+    def __str__(self):
+        return self.ingredient
+
 
 class Recipe(models.Model):
     author = models.ForeignKey(
@@ -43,6 +46,9 @@ class Recipe(models.Model):
         through='RecipeIngredient'
     )
 
+    def __str__(self):
+        return self.name
+
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
@@ -60,3 +66,6 @@ class RecipeIngredient(models.Model):
     quantity = models.IntegerField(
         verbose_name='Количество',
     )
+
+    # def __str__(self):
+    #     return ''
