@@ -3,6 +3,13 @@ from django.db import models
 from users.models import User
 
 
+COLOR_CHOICES =(
+    ('#E26C2D', 'Оранжевый'),
+    ('#00ff00', 'Зеленый'),
+    ('#3b2fff', 'Синий'),
+)
+
+
 class Ingredient(models.Model):
     ingredient = models.CharField(
         max_length=200,
@@ -15,6 +22,25 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return self.ingredient
+
+
+class Tag(models.Model):
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Название тега'
+    )
+    color = models.CharField(
+        max_length=7,
+        choices=COLOR_CHOICES,
+        verbose_name='Цвет тега'
+    )
+    slug = models.SlugField(
+        unique=True, default='-пусто-',
+        verbose_name='URL тега'
+    )
+    
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -45,7 +71,10 @@ class Recipe(models.Model):
         Ingredient,
         through='RecipeIngredient'
     )
-
+    tag = models.ManyToManyField(
+        Tag,
+        through='TagRecipe'
+    )
     def __str__(self):
         return self.name
 
@@ -67,5 +96,17 @@ class RecipeIngredient(models.Model):
         verbose_name='Количество',
     )
 
-    # def __str__(self):
-    #     return ''
+
+class TagRecipe(models.Model):
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.CASCADE,
+        related_name='recipes',
+        verbose_name='Название тега'
+    )
+    recipe = models.ForeignKey(
+       Recipe,
+       on_delete=models.CASCADE,
+       related_name='tags',
+       verbose_name='Название рецепта'
+    )
