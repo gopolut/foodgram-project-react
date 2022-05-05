@@ -70,14 +70,13 @@ class RecipeAdmin(admin.ModelAdmin):
     #         return InlineIngredient
     
     readonly_fields = ('favorited_count', )
-    
-    verbose_name = 'Рецепт'
-    
+       
     # Перечень полей ForeignKey, ManyToMany, кот. отображаются в виде списка с возможностью поиска
     autocomplete_fields = ('author',)
     
     # задает кортеж со ссылками на классы встроенных редакторов, регистрир. в текущем редакторе
     inlines = (InlineIngredient, InlineTag, )
+    
     raw_id_fields = ('author',)
 
 
