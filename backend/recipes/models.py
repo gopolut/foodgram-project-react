@@ -132,14 +132,33 @@ class Favorited(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        related_name='author',
-        verbose_name='Пользователь',
+        related_name='user',
+        verbose_name='Пользователь(Кто добавил)',
         null=True,
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.SET_NULL,
-        related_name='recipes',
+        related_name='recipes_fav',
+        verbose_name='Название рецепта',
+        null=True,
+    )
+
+    # TODO: добавить models.UniqueConstraint()
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='buyer',
+        verbose_name='Покупатель(Кто добавил)',
+        null=True,
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.SET_NULL,
+        related_name='recipes_shop',
         verbose_name='Название рецепта',
         null=True,
     )
@@ -170,5 +189,3 @@ class Follow(models.Model):
                 name='uniq_following'
             )
         ]
-
-
