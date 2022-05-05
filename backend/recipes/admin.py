@@ -1,7 +1,6 @@
-from tabnanny import verbose
 from django.contrib import admin
 
-from .models import Recipe, Ingredient, RecipeIngredient, Tag, Favorited
+from .models import Recipe, Ingredient, Tag, Follow, RecipeIngredient
 
 
 class InlineIngredient(admin.TabularInline):
@@ -20,6 +19,7 @@ class InlineTag(admin.TabularInline):
     verbose_name = 'Тег'
 
 
+@admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     '''Редактор модели Recipe - класс,
     указывающий параметры представления модели
@@ -80,6 +80,7 @@ class RecipeAdmin(admin.ModelAdmin):
     raw_id_fields = ('author',)
 
 
+@admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     '''Редактор модели Ingredient'''
 
@@ -92,6 +93,7 @@ class IngredientAdmin(admin.ModelAdmin):
     search_fields = ('ingredient',)
 
 
+@admin.register(RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):
     '''Редактор модели RecipeIngredient'''
 
@@ -102,7 +104,7 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
         'quantity',
     )
 
-
+@admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     '''Редактор модели Tag'''
 
@@ -113,7 +115,16 @@ class TagAdmin(admin.ModelAdmin):
         'slug',
     )
 
-admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(Ingredient, IngredientAdmin)
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk',
+        'user',
+        'author',
+    )
+
+
+# admin.site.register(Recipe, RecipeAdmin)
+# admin.site.register(Ingredient, IngredientAdmin)
 # admin.site.register(RecipeIngredient, RecipeIngredientAdmin)
-admin.site.register(Tag, TagAdmin)
+# admin.site.register(Tag, TagAdmin)
