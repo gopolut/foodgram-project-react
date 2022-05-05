@@ -1,7 +1,7 @@
 from tabnanny import verbose
 from django.contrib import admin
 
-from .models import Recipe, Ingredient, RecipeIngredient, Tag
+from .models import Recipe, Ingredient, RecipeIngredient, Tag, Favorited
 
 
 class InlineIngredient(admin.TabularInline):
@@ -34,11 +34,24 @@ class RecipeAdmin(admin.ModelAdmin):
         'author',
         'text',
         'cooking_time',
+        'favorited_count',
     )
+
+    # fieldsets = (
+    #     (None, {
+    #         'fields': (('name', 'image','author'), 'text'),
+    #         'classes': ('wide',),
+    #     }),
+    #     ('Another', {
+    #         'fields': ('cooking_time', ),
+    #         'description': 'nnnnnn'
+    #     })
+    # )
 
     # последовательность выводимых полей
     fields = (
         'name',
+        'favorited_count',
         'image',
         'author',
         'text',
@@ -55,16 +68,16 @@ class RecipeAdmin(admin.ModelAdmin):
     #         return ()
     #     else:
     #         return InlineIngredient
-
+    
+    readonly_fields = ('favorited_count', )
+    
     verbose_name = 'Рецепт'
-
+    
     # Перечень полей ForeignKey, ManyToMany, кот. отображаются в виде списка с возможностью поиска
     autocomplete_fields = ('author',)
-
-    # задает кортеж со ссылками на классы встроенных редакторов,
-    # регистрир. в текущем редакторе
+    
+    # задает кортеж со ссылками на классы встроенных редакторов, регистрир. в текущем редакторе
     inlines = (InlineIngredient, InlineTag, )
-
     raw_id_fields = ('author',)
 
 
@@ -73,7 +86,6 @@ class IngredientAdmin(admin.ModelAdmin):
 
     list_display = (
         'pk',
-        'id',
         'ingredient',
         'measurement_unit',
     )

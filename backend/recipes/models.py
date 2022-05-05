@@ -84,8 +84,15 @@ class Recipe(models.Model):
         Tag,
         through='TagRecipe'
     )
+    
     def __str__(self):
         return self.name
+
+    def favorited_count(self):
+        ''''''
+        return self.recipes.count()
+
+    favorited_count.short_description = 'Число добавлений в избранное'
 
 
 class RecipeIngredient(models.Model):
