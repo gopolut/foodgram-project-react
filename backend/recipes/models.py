@@ -119,3 +119,22 @@ class TagRecipe(models.Model):
        related_name='tags',
        verbose_name='Название рецепта'
     )
+
+
+class Favorited(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='author',
+        verbose_name='Пользователь',
+        null=True,
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.SET_NULL,
+        related_name='recipes',
+        verbose_name='Название рецепта',
+        null=True,
+    )
+
+    # добавить models.UniqueConstraint()
