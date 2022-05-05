@@ -144,4 +144,31 @@ class Favorited(models.Model):
         null=True,
     )
 
-    # добавить models.UniqueConstraint()
+    # TODO: добавить models.UniqueConstraint()
+
+
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='follower',
+        verbose_name='Подписчик',
+        null=True
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name='following',
+        verbose_name='Автор канала',
+        null=True
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='uniq_following'
+            )
+        ]
+
+
