@@ -22,13 +22,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     # ---------------------------
     'recipes.apps.RecipesConfig', # приложение Recipes
     'users.apps.UsersConfig',     # приложение Users
     'api.apps.ApiConfig',         # приложение api 
     # ---------------------------
-    'rest_framework',
-    'rest_framework.authtoken',
+
 ]
 
 MIDDLEWARE = [
