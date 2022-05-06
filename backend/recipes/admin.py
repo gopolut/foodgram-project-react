@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Recipe, Ingredient, Tag, Follow, RecipeIngredient
+from .models import Recipe, Ingredient, Tag, Follow, RecipeIngredient, TAG_CHOICES
 
 
 class InlineIngredient(admin.TabularInline):
@@ -19,6 +19,25 @@ class InlineTag(admin.TabularInline):
     verbose_name = 'Тег'
 
 
+# класс для фильтрации по тегам
+class TagFilter(admin.SimpleListFilter):
+    title = 'Теги'
+    parameter_name = 'теги'
+
+    def lookups(self, request, model_admin):
+        return TAG_CHOICES
+
+    def queryset(self, request, queryset):
+        if self.value() == 'breakfast':
+            return queryset.filter(tag=1)
+        elif self.value() == 'lunch':
+            return queryset.filter(tag=2)
+        elif self.value() == 'dinner':
+            return queryset.filter(tag=3)
+        elif self.value() == 'supper':
+            return queryset.filter(tag=4)
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     '''Редактор модели Recipe - класс,
@@ -32,11 +51,34 @@ class RecipeAdmin(admin.ModelAdmin):
         'name',
         'image',
         'author',
-        'text',
+        # 'text',
         'cooking_time',
         'favorited_count',
     )
 
+    # поля, значения которых превращены в гиперссылки
+    list_display_links = (
+        'pk',
+        'name',
+    )
+
+    # поиск
+    search_fields = (
+        'author__username',
+        'name',
+    )
+
+    # фильтрация
+    list_filter = (
+        'author__first_name',
+        'name',
+        TagFilter,
+    )
+    sortable_by = (
+        'name',
+        'author',
+        'favorited_count',
+    )
     # fieldsets = (
     #     (None, {
     #         'fields': (('name', 'image','author'), 'text'),
@@ -72,7 +114,7 @@ class RecipeAdmin(admin.ModelAdmin):
     readonly_fields = ('favorited_count', )
        
     # Перечень полей ForeignKey, ManyToMany, кот. отображаются в виде списка с возможностью поиска
-    autocomplete_fields = ('author',)
+    autocomplete_fields = ('author', )
     
     # задает кортеж со ссылками на классы встроенных редакторов, регистрир. в текущем редакторе
     inlines = (InlineIngredient, InlineTag, )
@@ -88,6 +130,11 @@ class IngredientAdmin(admin.ModelAdmin):
         'pk',
         'ingredient',
         'measurement_unit',
+    )
+
+    list_display_links = (
+        'pk',
+        'ingredient',
     )
 
     search_fields = ('ingredient',)

@@ -1,6 +1,6 @@
 from django.db import models
 
-from users.models import User
+from users.models import CustomUser
 
 
 COLOR_CHOICES =(
@@ -54,7 +54,7 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='recipes',
         verbose_name='Автор',
@@ -90,7 +90,7 @@ class Recipe(models.Model):
 
     def favorited_count(self):
         ''''''
-        return self.recipes.count()
+        return self.recipes_fav.count()
 
     favorited_count.short_description = 'Число добавлений в избранное'
 
@@ -130,15 +130,15 @@ class TagRecipe(models.Model):
 
 class Favorited(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
+        CustomUser,
+        on_delete=models.SET_NULL, # CASCADE
         related_name='user',
         verbose_name='Пользователь(Кто добавил)',
         null=True,
     )
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.SET_NULL,
+        on_delete=models.SET_NULL,  # CASCADE
         related_name='recipes_fav',
         verbose_name='Название рецепта',
         null=True,
@@ -149,15 +149,15 @@ class Favorited(models.Model):
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
+        CustomUser,
+        on_delete=models.SET_NULL,   # CASCADE
         related_name='buyer',
         verbose_name='Покупатель(Кто добавил)',
         null=True,
     )
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.SET_NULL,
+        on_delete=models.SET_NULL,   # CASCADE
         related_name='recipes_shop',
         verbose_name='Название рецепта',
         null=True,
@@ -168,14 +168,14 @@ class ShoppingCart(models.Model):
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.SET_NULL,
         related_name='follower',
         verbose_name='Подписчик',
         null=True
     )
     author = models.ForeignKey(
-        User,
+        CustomUser,
         on_delete=models.SET_NULL,
         related_name='following',
         verbose_name='Автор канала',
