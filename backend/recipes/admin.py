@@ -137,6 +137,11 @@ class IngredientAdmin(admin.ModelAdmin):
         'ingredient',
     )
 
+    # фильтрация
+    list_filter = (
+        'ingredient',
+    )
+
     search_fields = ('ingredient',)
 
 
@@ -169,9 +174,3 @@ class FollowAdmin(admin.ModelAdmin):
         'user',
         'author',
     )
-
-
-# admin.site.register(Recipe, RecipeAdmin)
-# admin.site.register(Ingredient, IngredientAdmin)
-# admin.site.register(RecipeIngredient, RecipeIngredientAdmin)
-# admin.site.register(Tag, TagAdmin)
