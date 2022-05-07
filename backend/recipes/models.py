@@ -18,7 +18,7 @@ TAG_CHOICES =(
 )
 
 class Ingredient(models.Model):
-    ingredient = models.CharField(
+    name = models.CharField(
         max_length=200,
         verbose_name='Название ингредиента'
     )
@@ -76,11 +76,11 @@ class Recipe(models.Model):
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления (в минутах)',
     )
-    ingredient = models.ManyToManyField(
+    ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient'
     )
-    tag = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tag,
         through='TagRecipe'
     )
@@ -99,7 +99,7 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='ingredients',
+        related_name='ingredient',
         verbose_name='Название рецепта'
     )
     ingredient = models.ForeignKey(
@@ -108,7 +108,7 @@ class RecipeIngredient(models.Model):
         related_name='recipes',
         verbose_name='Название ингредиента'
     )
-    quantity = models.IntegerField(
+    amount = models.IntegerField(
         verbose_name='Количество',
     )
 
@@ -117,13 +117,13 @@ class TagRecipe(models.Model):
     tag = models.ForeignKey(
         Tag,
         on_delete=models.CASCADE,
-        related_name='recipes',
+        related_name='tag_recipe',
         verbose_name='Название тега'
     )
     recipe = models.ForeignKey(
        Recipe,
        on_delete=models.CASCADE,
-       related_name='tags',
+       related_name='recipe_tag',
        verbose_name='Название рецепта'
     )
 

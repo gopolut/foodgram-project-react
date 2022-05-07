@@ -47,6 +47,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
             'quantity',
         )
         model = RecipeIngredient
+        
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -55,13 +56,25 @@ class IngredientSerializer(serializers.ModelSerializer):
     
     class Meta:
         fields = (
-            'pk',
+            'id',
             'ingredient',
             'measurement_unit',
         )
         model = Ingredient
-        lookup_field = 'slug'
+        lookup_field = 'id'
 
+
+class TagSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        fields = (
+            'id',
+            'name',
+            'color',
+            'slug',
+        )
+        model = Tag
+        lookup_field = 'id'
 
 
 class TagRecipeSerializer(serializers.ModelSerializer):
@@ -127,6 +140,52 @@ class RecipeSerializer(serializers.ModelSerializer):
         return ShoppingCart.objects.filter(user=request.user, recipe=obj).exists()        
 
 
+class RecipeWriteSerializer(serializers.ModelSerializer):
+    # tags = serializers.SerializerMethodField(source='recipe.tag')
+    # ingredients = serializers.SerializerMethodField(source='recipe.ingredient')
+
+    tags = SlugRelatedField(
+        slug_field='recipes',
+        queryset=Tag.objects.all(),
+        many=True
+    )
+    ingredients = SlugRelatedField(
+        slug_field='ingredients',
+        queryset=RecipeIngredient.objects.all(),
+        many=True
+    )
+
+    # tags = TagSerializer(many=True)
+    # ingredients = IngredientSerializer(many=True)
+
+    # ingredients = serializers.SerializerMethodField()
+    # tags = serializers.SerializerMethodField()
+
+    
+
+    class Meta:
+        fields = (
+            'tags',
+            'author',
+            'ingredients',
+            'name',
+            'image',
+            'text',
+            'cooking_time',
+        )
+        model = Recipe
+        
+    # def get_ingredients(self, obj):
+    #     # print('context: ', self)
+    #     queryset = RecipeIngredient.objects.filter(recipe=obj)
+    #     return RecipeIngredientSerializer(queryset, many=True).data
+    
+    # def get_tags(self, obj):
+    #     queryset = TagRecipe.objects.filter(recipe=obj)
+    #     return TagRecipeSerializer(queryset, many=True).data
+
+
+
 
 class CustomTokenSerializer(serializers.ModelSerializer):
     class Meta:
@@ -146,5 +205,7 @@ class CustomTokenSerializer(serializers.ModelSerializer):
         # method = self.context["request"].method
         # print(f'author: {password}, method: {method}')
         return data
+    
     def create(self, validated_data):
         print('**validated_data: ', **validated_data)
+    

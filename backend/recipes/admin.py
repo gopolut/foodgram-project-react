@@ -7,7 +7,7 @@ class InlineIngredient(admin.TabularInline):
     '''Для регистрации встроенного редактора в первичном редакторе или
     для редактирования дочерней модели на странице родительской модели.
     '''
-    model = Recipe.ingredient.through
+    model = Recipe.ingredients.through
     verbose_name = 'Ингредиент'
 
 
@@ -15,7 +15,7 @@ class InlineTag(admin.TabularInline):
     '''для редактирования дочерней модели Tag
     на странице родительской модели Recipe
     '''
-    model = Recipe.tag.through
+    model = Recipe.tags.through
     verbose_name = 'Тег'
 
 
@@ -128,21 +128,21 @@ class IngredientAdmin(admin.ModelAdmin):
 
     list_display = (
         'pk',
-        'ingredient',
+        'name',
         'measurement_unit',
     )
 
     list_display_links = (
         'pk',
-        'ingredient',
+        'name',
     )
 
     # фильтрация
     list_filter = (
-        'ingredient',
+        'name',
     )
 
-    search_fields = ('ingredient',)
+    search_fields = ('name',)
 
 
 @admin.register(RecipeIngredient)
@@ -153,7 +153,7 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
         'pk',
         'recipe',
         'ingredient',
-        'quantity',
+        'amount',
     )
 
 @admin.register(Tag)
