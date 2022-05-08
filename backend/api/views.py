@@ -19,9 +19,9 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import viewsets
 
-from recipes.models import Ingredient, Recipe
-from .serializers import CustomTokenSerializer, IngredientSerializer, RecipeSerializer, RecipeWriteSerializer
-from .permissions import IsOwnerOrReadOnly
+from recipes.models import Ingredient, Recipe, Tag
+from .serializers import CustomTokenSerializer, IngredientSerializer, RecipeSerializer, RecipeWriteSerializer, TagSerializer
+from .permissions import IsAuthorOrReadOnly
 
 User = get_user_model()
 
@@ -29,7 +29,7 @@ User = get_user_model()
 # @csrf_exempt
 # @api_view(['GET', 'POST'])
 # class Ingredientlist(APIView):
-#     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+#     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
 # # def ingredient_list(request, format=None):
 # # if request.method == 'GET':
 #     lookup_field = 'slug'
@@ -70,13 +70,19 @@ User = get_user_model()
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
 
 
+class TagViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     
