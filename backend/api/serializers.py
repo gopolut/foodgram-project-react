@@ -214,14 +214,35 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             context={'request': self.context.get('request')}
         ).data
 
+    
+    def validate_tags(self, data):
+        print('data_id:__', data)
+        print('self.instance:__', self.instance.id)
+        
+        if len(data) == 0:
+             raise ValidationError({
+                        'tags':'Добавьте одно или несколько значений в поле tags'
+                    }) 
 
+        for tag in data:
+            print('tag:', tag.id)
+        
+        # if self.context['request'].method == 'PATCH':
+        #     if Recipe.objects.filter(
+        #         id=self.instance.id,
+        #         tags=tag.id).exists():
+        #             raise ValidationError({
+        #                 'tags':f'Тег {tag.id} уже назначен!'
+        #             })
 
+        return data
+    
     def validate_ingredients(self, data):
-        print('data----', data)      
+        # print('data----', data)      
 
         for element in data: # OrderedDict([('id', 1), ('amount', 1)])
             
-            print('get_: ', element.get('id'))
+            # print('get_: ', element.get('id'))
             id = element.get('id')
             amount = element.get('amount')
             
