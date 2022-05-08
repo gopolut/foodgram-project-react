@@ -29,13 +29,13 @@ class TagFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'breakfast':
-            return queryset.filter(tag=1)
+            return queryset.filter(tags=1)
         elif self.value() == 'lunch':
-            return queryset.filter(tag=2)
+            return queryset.filter(tags=2)
         elif self.value() == 'dinner':
-            return queryset.filter(tag=3)
+            return queryset.filter(tags=3)
         elif self.value() == 'supper':
-            return queryset.filter(tag=4)
+            return queryset.filter(tags=4)
 
 
 @admin.register(Recipe)

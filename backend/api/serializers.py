@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404
 
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Favorited, ShoppingCart, Tag, TagRecipe, Follow
 
+from .functions import calculate_ingredients
+
 User = get_user_model()
 
 
@@ -34,7 +36,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     
     id = serializers.ReadOnlyField(source='ingredient.id')
-    name = serializers.ReadOnlyField(source='ingredient.ingredient')
+    name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
 
@@ -44,24 +46,35 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'measurement_unit',
-            'quantity',
+            'amount',
         )
         model = RecipeIngredient
-        
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    ingredient = serializers.CharField()
+    name = serializers.CharField()
     measurement_unit = serializers.CharField()
     
     class Meta:
         fields = (
             'id',
-            'ingredient',
+            'name',
             'measurement_unit',
         )
         model = Ingredient
         lookup_field = 'id'
+
+
+class IngredientWriteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = Ingredient
+        fields = (
+            'id',
+            'amount',
+        )
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -141,28 +154,21 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
-    # tags = serializers.SerializerMethodField(source='recipe.tag')
-    # ingredients = serializers.SerializerMethodField(source='recipe.ingredient')
 
     tags = SlugRelatedField(
-        slug_field='recipes',
+        slug_field='id',
         queryset=Tag.objects.all(),
         many=True
     )
-    ingredients = SlugRelatedField(
-        slug_field='ingredients',
-        queryset=RecipeIngredient.objects.all(),
-        many=True
-    )
+    # ingredients = SlugRelatedField(
+    #     slug_field='id',
+    #     queryset=Ingredient.objects.all(),
+    #     many=True
+    # )
 
-    # tags = TagSerializer(many=True)
-    # ingredients = IngredientSerializer(many=True)
+    ingredients = IngredientWriteSerializer(many=True)
 
-    # ingredients = serializers.SerializerMethodField()
-    # tags = serializers.SerializerMethodField()
-
-    
-
+   
     class Meta:
         fields = (
             'tags',
@@ -174,16 +180,46 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'cooking_time',
         )
         model = Recipe
-        
-    # def get_ingredients(self, obj):
-    #     # print('context: ', self)
-    #     queryset = RecipeIngredient.objects.filter(recipe=obj)
-    #     return RecipeIngredientSerializer(queryset, many=True).data
-    
-    # def get_tags(self, obj):
-    #     queryset = TagRecipe.objects.filter(recipe=obj)
-    #     return TagRecipeSerializer(queryset, many=True).data
 
+
+    def create(self, validated_data):
+        '''Метод для создания рецепта и добавления ингредиентов и тегов при PATCH-запросе.
+        '''
+        print('-----', validated_data)
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        recipe.tags.set(tags)
+    
+        calculate_ingredients(ingredients, recipe)
+        return recipe
+
+    def update(self, instance, validated_data):
+        '''Метод для обновления рецепта при PATCH-запросе
+        '''
+
+        if 'ingredients' in self.validated_data:
+            ingredients = validated_data.pop('ingredients')
+            instance.ingredients.clear()
+            
+            calculate_ingredients(ingredients, instance)
+        tags = validated_data.pop('tags')
+        instance.tags.set(tags)
+        return super().update(instance, validated_data)
+
+    def to_representation(self, instance):
+        return RecipeSerializer(
+            instance,
+            context={'request': self.context.get('request')}
+        ).data
+
+
+    
+    def validate_ingredients(self, data):
+
+        print('__________data: ', data[0]['id'])
+        print('__________data: ', data[0]['amount'])
+        return data
 
 
 
