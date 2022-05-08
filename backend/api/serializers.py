@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.forms import ValidationError
 from pkg_resources import require
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
@@ -214,13 +215,52 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         ).data
 
 
-    
-    def validate_ingredients(self, data):
 
-        print('__________data: ', data[0]['id'])
-        print('__________data: ', data[0]['amount'])
+    def validate_ingredients(self, data):
+        print('data----', data)      
+
+        for element in data: # OrderedDict([('id', 1), ('amount', 1)])
+            
+            print('get_: ', element.get('id'))
+            id = element.get('id')
+            amount = element.get('amount')
+            
+            if not id and id != 0:
+                raise ValidationError({
+                'id':'Это поле обязательно!'
+            })
+            if not amount and amount!= 0:
+                raise ValidationError({
+                'amount':'Это поле обязательно!'
+            })
+            
+            if id < 1:
+               raise ValidationError({
+                'id': 'Значение должно быть >= 1.'
+            })
+            if amount < 1:
+               raise ValidationError({
+                'amount': 'Значение должно быть >= 1.'
+            })
+
+        # for element in data:    
+
+        # print('____data: ', data[0]['id'])
+        # print('____data: ', data[0]['amount'])
         return data
 
+
+    def validate(self, data):
+        fields = ['tags', 'ingredients', 'name', 'text', 'cooking_time']
+        # print('data----', data)
+
+        for element in fields:
+            # print('element_0000:', element )
+            if not element in data:
+                raise ValidationError({
+                  f'{element}': f'Поле отсутствует!'  
+                })
+        return data
 
 
 class CustomTokenSerializer(serializers.ModelSerializer):
@@ -230,6 +270,7 @@ class CustomTokenSerializer(serializers.ModelSerializer):
             'email',
             'password',
         )
+
     def validate(self, data):
         print('data: ', data)
         print('password: ', data['password'])

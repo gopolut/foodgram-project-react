@@ -127,6 +127,14 @@ class TagRecipe(models.Model):
        verbose_name='Название рецепта'
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['tag', 'recipe'],
+                name='uniq_tags'
+            )
+        ]
+
 
 class Favorited(models.Model):
     user = models.ForeignKey(
