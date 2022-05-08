@@ -182,6 +182,35 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         )
         model = Recipe
 
+    def validate(self, data):
+        '''
+        Проверка на уникальность рецепта и наличия обязательных полей.
+        '''
+        fields = ['tags', 'ingredients', 'name', 'text', 'cooking_time']
+        print('data--validate--', data)
+
+        request = self.context.get('request')
+        reciipe_name = data.get('name')
+        reciipe_text = data.get('text')
+
+        print('data--reciipe_name--', reciipe_name)
+        
+        if request.method == 'POST' and Recipe.objects.filter(
+            author=request.user,
+            name=reciipe_name,
+            text=reciipe_text
+        ).exists():
+            raise serializers.ValidationError({
+                f'{reciipe_name}': 'Рецепт с таким название уже существует!'
+            })
+
+        for element in fields:
+            # print('element_0000:', element )
+            if not element in data:
+                raise ValidationError({
+                  f'{element}': f'Поле отсутствует!'  
+                })
+        return data
 
     def create(self, validated_data):
         '''Метод для создания рецепта и добавления ингредиентов и тегов при PATCH-запросе.
@@ -216,8 +245,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     
     def validate_tags(self, data):
-        print('data_id:__', data)
-        print('self.instance:__', self.instance.id)
+        # print('data_id:__', data)
+        # print('self.instance:__', self.instance.id)
         
         if len(data) == 0:
              raise ValidationError({
@@ -270,18 +299,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         # print('____data: ', data[0]['amount'])
         return data
 
-
-    def validate(self, data):
-        fields = ['tags', 'ingredients', 'name', 'text', 'cooking_time']
-        # print('data----', data)
-
-        for element in fields:
-            # print('element_0000:', element )
-            if not element in data:
-                raise ValidationError({
-                  f'{element}': f'Поле отсутствует!'  
-                })
-        return data
 
 
 class CustomTokenSerializer(serializers.ModelSerializer):
