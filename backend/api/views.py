@@ -100,6 +100,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class ShoppingCartView(views.APIView):
+    # Эти методы дляя ViewSet----
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     # serializer_class = ShoppingCartSerializer
 
@@ -110,32 +111,24 @@ class ShoppingCartView(views.APIView):
     # def perform_create(self, serializer):
     #     recipe = get_object_or_404(Recipe, pk=self.kwargs.get('id'))
     #     serializer.save(user=self.request.user, recipe=recipe)
+    # -----------------------------------------------------------------------------------
     
-    
-    # def destroy(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     self.perform_destroy(instance)
-
-
-    def create(self, request, id):
+    def post(self, request, id):
         data = {
             'user': request.user.id,
             'recipe': id
         }
+        print('++++++', data)
         context = {'request': request}
         serializer = ShoppingCartSerializer(data=data, context=context)
         serializer.is_valid(raise_exception=True)  
         serializer.save()      
         return Response(
-        serializer.data,
-        status.HTTP_201_CREATED
+            serializer.data,
+            status.HTTP_201_CREATED
     )
 
     def delete(self, request, id):
-        # self.perform_destroy(instance)
-        # instance = self.get_object(id)
-        # instance.delete()
-
         user=request.user.id
         # recipe_id = self.kwargs.get('id')
         shop = ShoppingCart.objects.get(recipe=id, user=user)
@@ -151,7 +144,8 @@ class ShoppingCartView(views.APIView):
         return Response(
         status=status.HTTP_204_NO_CONTENT
         )
-    
+
+
 
 # class RecipeList(views.APIView):
 #     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)

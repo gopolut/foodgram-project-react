@@ -321,6 +321,18 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         model = ShoppingCart
 
    
+
+    def validate(self, data):
+        request = self.context['request']
+        if request.method == 'POST' and ShoppingCart.objects.filter(
+            user=request.user,
+            recipe=data['recipe'].id
+        ).exists():
+            raise serializers.ValidationError(
+                'Рецепт уже находится в списке покупок!'
+            )
+        return data
+
     def to_representation(self, instance):
         return RecipeSerializerForShoppingCart(
             instance.recipe,
@@ -328,16 +340,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         ).data
 
 
-    def validate(self, data):
-        request = self.context['request']
-        if request.method == 'GET' and ShoppingCart.objects.filter(
-            user=request.user,
-            recipe=data['recipe'].id
-        ).exists():
-            raise serializers.ValidationError(
-                'fffffffffffffffffffffffffff'
-            )
-        return data
 
     # def get_cooking_time(self, obj):
     #    print('get_cooking_time_____: ', obj)
