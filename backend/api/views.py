@@ -123,7 +123,6 @@ class ShoppingCartView(views.APIView):
             'user': request.user.id,
             'recipe': id
         }
-        print('++++++', data)
         context = {'request': request}
         serializer = ShoppingCartSerializer(data=data, context=context)
         serializer.is_valid(raise_exception=True)  
@@ -134,24 +133,20 @@ class ShoppingCartView(views.APIView):
     )
 
     def delete(self, request, id):
-        user=request.user.id
-        # recipe_id = self.kwargs.get('id')
-        shop = ShoppingCart.objects.get(recipe=id, user=user)
-        # shop = get_object_or_404(ShoppingCart, recipe=self.kwargs.get('id'), user=user)
-        data = {
-            'user': request.user.id,
-            'recipe': id
-        }
-        context = {'request': request}
-        serializer = ShoppingCartSerializer(data=data, context=context)
-        serializer.is_valid(raise_exception=True)        
+        try:    
+            shop = ShoppingCart.objects.get(recipe=id, user=request.user)
+        except ShoppingCart.DoesNotExist:
+            return Response({
+                'errors': 'Удаление невозможно, такого рецепта нет в корзине!'
+            }, status=status.HTTP_400_BAD_REQUEST   
+            )     
         shop.delete()
         return Response(
-        status=status.HTTP_204_NO_CONTENT
+            status=status.HTTP_204_NO_CONTENT
         )
 
 class FavoritedView(views.APIView):
-
+        
     def post(self, request, id):
         data = {
             'user': request.user.id,
@@ -166,12 +161,25 @@ class FavoritedView(views.APIView):
             status.HTTP_201_CREATED
         )
 
+    def delete(self, request, id):
+        try:
+            favorited = Favorited.objects.get(recipe=id, user=request.user)
+        except Favorited.DoesNotExist:
+            return Response({
+                'errors' : 'Удаление невозможно, такого рецепта нет в избранном!'
+                }, status=status.HTTP_400_BAD_REQUEST
+            )    
+        favorited.delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+
 class DownloadShoppingCartView(views.APIView):
     
     def get(self, request):
         user = request.user
 
-        # shopping_list = [1, 3 ,5]
         shopping_list = user.buyer.values(
             'recipe__ingredients__name', 'recipe__ingredients__measurement_unit'
             ).annotate(
