@@ -23,8 +23,12 @@ from rest_framework.decorators import api_view
 # from rest_framework.views import APIView
 from rest_framework import viewsets, views
 
-from recipes.models import Ingredient, Recipe, Tag, ShoppingCart
-from .serializers import CustomTokenSerializer, IngredientSerializer, RecipeSerializer, RecipeWriteSerializer, TagSerializer, ShoppingCartSerializer, DownloadShoppingCartSerializer
+from recipes.models import Ingredient, Recipe, Tag, ShoppingCart, Favorited
+from .serializers import (CustomTokenSerializer, IngredientSerializer,
+                          RecipeSerializer, RecipeWriteSerializer,
+                          TagSerializer, ShoppingCartSerializer,
+                          FavoritedSerializer)
+
 from .permissions import IsAuthorOrReadOnly
 from .viewsets import FavoritedShoppingCartViewSet
 
@@ -101,7 +105,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class ShoppingCartView(views.APIView):
-    # Эти методы дляя ViewSet----
+    # Эти методы для ViewSet----
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     # serializer_class = ShoppingCartSerializer
 
@@ -144,6 +148,22 @@ class ShoppingCartView(views.APIView):
         shop.delete()
         return Response(
         status=status.HTTP_204_NO_CONTENT
+        )
+
+class FavoritedView(views.APIView):
+
+    def post(self, request, id):
+        data = {
+            'user': request.user.id,
+            'recipe': id
+        }
+        context = {'request': request}
+        serializer = FavoritedSerializer(data=data, context=context)
+        serializer.is_valid(raise_exception=True) 
+        serializer.save()      
+        return Response(
+            serializer.data,
+            status.HTTP_201_CREATED
         )
 
 class DownloadShoppingCartView(views.APIView):

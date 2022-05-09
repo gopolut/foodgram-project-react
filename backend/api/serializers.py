@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.contrib.auth import get_user_model
 from django.forms import ValidationError
 from pkg_resources import require
@@ -300,7 +301,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return data
 
 
-class RecipeSerializerForShoppingCart(serializers.ModelSerializer):
+class CartFavoritedRecipeSerializer(serializers.ModelSerializer):
     '''
     
     '''
@@ -333,7 +334,34 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        return RecipeSerializerForShoppingCart(
+        return CartFavoritedRecipeSerializer(
+            instance.recipe,
+            context={'request': self.context.get('request')},
+        ).data
+
+
+
+class FavoritedSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('__all__')
+        model = Favorited
+
+
+    def validate(self, data):
+        request = self.context['request']
+        if request.method == 'POST' and Favorited.objects.filter(
+            user=request.user,
+            recipe=data['recipe'].id
+        ).exists():
+            raise serializers.ValidationError(
+                'Рецепт уже добавлен в избранное!'
+            )
+        return data
+
+
+    def to_representation(self, instance):
+        return CartFavoritedRecipeSerializer(
             instance.recipe,
             context={'request': self.context.get('request')},
         ).data

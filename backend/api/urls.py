@@ -33,5 +33,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path(r'recipes/download_shopping_cart', views.DownloadShoppingCartView.as_view(), name='shopping_cart'),
     path(r'recipes/<int:id>/shopping_cart/', views.ShoppingCartView.as_view(), name='shopping_cart'),
+    path(r'recipes/<int:id>/favorite/', views.FavoritedView.as_view(), name='favorited'),
 
 ]
