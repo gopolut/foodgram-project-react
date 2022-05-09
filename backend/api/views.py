@@ -23,11 +23,11 @@ from rest_framework.decorators import api_view
 # from rest_framework.views import APIView
 from rest_framework import viewsets, views
 
-from recipes.models import Ingredient, Recipe, Tag, ShoppingCart, Favorited
-from .serializers import (CustomTokenSerializer, IngredientSerializer,
+from recipes.models import Ingredient, Recipe, Tag, ShoppingCart, Favorited, Follow
+from .serializers import (IngredientSerializer,
                           RecipeSerializer, RecipeWriteSerializer,
                           TagSerializer, ShoppingCartSerializer,
-                          FavoritedSerializer)
+                          FavoritedSerializer, FollowSerializer)
 
 from .permissions import IsAuthorOrReadOnly
 from .viewsets import FavoritedShoppingCartViewSet
@@ -105,7 +105,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class ShoppingCartView(views.APIView):
-    # Эти методы для ViewSet----
+    # -----------------------Эти методы для ViewSet:-----------------------------------
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     # serializer_class = ShoppingCartSerializer
 
@@ -201,6 +201,40 @@ class DownloadShoppingCartView(views.APIView):
         response = HttpResponse(print_list, 'Content-Type: application/pdf')
         response['Content-Disposition'] = 'attachment; filename="shopping_list"'
         return response
+
+
+class FollowingView(views.APIView):
+
+    def get_queryset(self):
+        return Follow.objects.all()
+
+
+    def post(self, request, id):
+        data = {
+            'user': request.user.id,
+            'author': id
+        }
+        context = {'request': request}
+        serializer = FollowSerializer(data=data, context=context)
+        serializer.is_valid(raise_exception=True) 
+        serializer.save()      
+        return Response(
+            serializer.data,
+            status.HTTP_201_CREATED
+        )
+
+    def delete(self, request, id):
+        try:
+            follow = Follow.objects.get(author=id, user=request.user)
+        except Follow.DoesNotExist:
+            return Response({
+                'errors' : 'Удаление невозможно, такого автора нет в подписках!'
+                }, status=status.HTTP_400_BAD_REQUEST
+            )    
+        follow.delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
 # class RecipeList(views.APIView):

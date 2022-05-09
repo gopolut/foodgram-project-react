@@ -27,12 +27,13 @@ router = DefaultRouter()
 router.register(r'tags', views.TagViewSet, basename='tags')
 router.register(r'recipes', views.RecipeViewSet, basename='recipes')
 router.register(r'ingredients', views.IngredientViewSet, basename='ingredients')
-# router.register(r'recipes/(?P<id>\d+)/shopping_cart', views.ShoppingCartViewSet.as_view, basename='shopping_cart')
+# router.register(r'users/(?P<id>\d+)/subscribe', views.FollowingViewSet, basename='following')
 
 urlpatterns = [
     path('', include(router.urls)),
     path(r'recipes/download_shopping_cart', views.DownloadShoppingCartView.as_view(), name='shopping_cart'),
     path(r'recipes/<int:id>/shopping_cart/', views.ShoppingCartView.as_view(), name='shopping_cart'),
     path(r'recipes/<int:id>/favorite/', views.FavoritedView.as_view(), name='favorited'),
+    path(r'users/<int:id>/subscribe/', views.FollowingView.as_view(), name='following'),
 
 ]
