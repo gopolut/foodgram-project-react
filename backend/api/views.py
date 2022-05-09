@@ -2,6 +2,7 @@ from django import views
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from django.db.models import Sum
 from requests import delete
 
 from rest_framework import status
@@ -23,7 +24,7 @@ from rest_framework.decorators import api_view
 from rest_framework import viewsets, views
 
 from recipes.models import Ingredient, Recipe, Tag, ShoppingCart
-from .serializers import CustomTokenSerializer, IngredientSerializer, RecipeSerializer, RecipeWriteSerializer, TagSerializer, ShoppingCartSerializer
+from .serializers import CustomTokenSerializer, IngredientSerializer, RecipeSerializer, RecipeWriteSerializer, TagSerializer, ShoppingCartSerializer, DownloadShoppingCartSerializer
 from .permissions import IsAuthorOrReadOnly
 from .viewsets import FavoritedShoppingCartViewSet
 
@@ -145,6 +146,33 @@ class ShoppingCartView(views.APIView):
         status=status.HTTP_204_NO_CONTENT
         )
 
+class DownloadShoppingCartView(views.APIView):
+    
+    def get(self, request):
+        user = request.user
+
+        # shopping_list = [1, 3 ,5]
+        shopping_list = user.buyer.values(
+            'recipe__ingredients__name', 'recipe__ingredients__measurement_unit'
+            ).annotate(
+                sum=Sum('recipe__ingredient__amount')
+                )
+
+        print_list = []
+        for element in shopping_list:
+            # ing_amout = f' {ingredient[0]} : {ingredient[1]}\n'
+            # print_list.append(ing_amout)
+            
+            ingredient = element.get('recipe__ingredients__name')
+            unit = element.get('recipe__ingredients__measurement_unit')
+            sum = element.get('sum')
+            total_ingredient = f'{ingredient}, {unit}: {sum}\n'
+            
+            print_list.append(total_ingredient)
+            
+        response = HttpResponse(print_list, 'Content-Type: application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="shopping_list"'
+        return response
 
 
 # class RecipeList(views.APIView):

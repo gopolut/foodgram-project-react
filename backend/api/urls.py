@@ -31,6 +31,7 @@ router.register(r'ingredients', views.IngredientViewSet, basename='ingredients')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path(r'recipes/<int:id>/shopping_cart/', views.ShoppingCartView.as_view(), name='shopping_cart')
+    path(r'recipes/download_shopping_cart', views.DownloadShoppingCartView.as_view(), name='shopping_cart'),
+    path(r'recipes/<int:id>/shopping_cart/', views.ShoppingCartView.as_view(), name='shopping_cart'),
 
 ]

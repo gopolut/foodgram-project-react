@@ -320,7 +320,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         fields = ('__all__')
         model = ShoppingCart
 
-   
 
     def validate(self, data):
         request = self.context['request']
@@ -338,18 +337,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
             instance.recipe,
             context={'request': self.context.get('request')},
         ).data
-
-
-
-    # def get_cooking_time(self, obj):
-    #    print('get_cooking_time_____: ', obj)
-    #    recipe_id = self.context['request'].parser_context['kwargs']['id']
-    #    print('recipe_id_____: ', recipe_id)
-    #    queryset = Recipe.objects.get(pk=recipe_id)
-    #    cooking_time = queryset.cooking_time
-    #    print('queryset----cooking_time: ', cooking_time)
-    #    return cooking_time
-
 
 
 class CustomTokenSerializer(serializers.ModelSerializer):
