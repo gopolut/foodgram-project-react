@@ -300,6 +300,55 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return data
 
 
+class RecipeSerializerForShoppingCart(serializers.ModelSerializer):
+    '''
+    
+    '''
+    class Meta:
+        fields = (
+            'id',
+            'name',
+            'image',
+            'cooking_time',
+        )
+        model = Recipe
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('__all__')
+        model = ShoppingCart
+
+   
+    def to_representation(self, instance):
+        return RecipeSerializerForShoppingCart(
+            instance.recipe,
+            context={'request': self.context.get('request')},
+        ).data
+
+
+    def validate(self, data):
+        request = self.context['request']
+        if request.method == 'GET' and ShoppingCart.objects.filter(
+            user=request.user,
+            recipe=data['recipe'].id
+        ).exists():
+            raise serializers.ValidationError(
+                'fffffffffffffffffffffffffff'
+            )
+        return data
+
+    # def get_cooking_time(self, obj):
+    #    print('get_cooking_time_____: ', obj)
+    #    recipe_id = self.context['request'].parser_context['kwargs']['id']
+    #    print('recipe_id_____: ', recipe_id)
+    #    queryset = Recipe.objects.get(pk=recipe_id)
+    #    cooking_time = queryset.cooking_time
+    #    print('queryset----cooking_time: ', cooking_time)
+    #    return cooking_time
+
+
 
 class CustomTokenSerializer(serializers.ModelSerializer):
     class Meta:
