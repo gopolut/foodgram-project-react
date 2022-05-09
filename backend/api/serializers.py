@@ -366,9 +366,10 @@ class FavoritedSerializer(serializers.ModelSerializer):
 
 
 
-class FollowReadSerializer(serializers.ModelSerializer):
+class SubscriptionsSerializer(serializers.ModelSerializer):
     '''
-
+        Сериализатор возвращает пользователей,
+        на которых подписан текущий пользователь.
     '''
 
     recipes = serializers.SerializerMethodField()
@@ -444,7 +445,7 @@ class FollowSerializer(serializers.ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        return FollowReadSerializer(
+        return SubscriptionsSerializer(
             instance.author,
             context={'request': self.context.get('request')},
         ).data

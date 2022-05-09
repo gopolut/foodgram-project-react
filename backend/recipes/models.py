@@ -200,3 +200,6 @@ class Follow(models.Model):
                 name='uniq_following'
             )
         ]
+
+    def __str__(self):
+        return (f'{self.user} подписан на: {self.author}')

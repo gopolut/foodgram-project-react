@@ -24,7 +24,7 @@ from rest_framework.decorators import api_view
 from rest_framework import viewsets, views
 
 from recipes.models import Ingredient, Recipe, Tag, ShoppingCart, Favorited, Follow
-from .serializers import (IngredientSerializer,
+from .serializers import (FollowReadSerializer, IngredientSerializer,
                           RecipeSerializer, RecipeWriteSerializer,
                           TagSerializer, ShoppingCartSerializer,
                           FavoritedSerializer, FollowSerializer)
@@ -235,6 +235,19 @@ class FollowingView(views.APIView):
         return Response(
             status=status.HTTP_204_NO_CONTENT
         )
+
+class SubscriptionsViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
+    serializer_class = FollowReadSerializer
+    http_method_names = ['get']
+    
+    def get_queryset(self):
+        user = self.request.user
+        new_queryset = User.objects.filter(following__user=user)
+        return new_queryset
+    
+
+
 
 
 # class RecipeList(views.APIView):
