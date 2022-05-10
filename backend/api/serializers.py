@@ -11,7 +11,26 @@ from recipes.models import Ingredient, Recipe, RecipeIngredient, Favorited, Shop
 
 from .functions import calculate_ingredients
 
+from djoser.serializers import UserCreateSerializer
+
 User = get_user_model()
+
+class CreateUserSerializer(UserCreateSerializer):
+
+    class Meta:
+        fields = (
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'password',
+        )
+        read_only_fields = (
+            'id',
+        )
+
+        model = User
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -34,6 +53,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             return False  
         return Follow.objects.filter(user=request.user, author=obj).exists()
 
+    
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     

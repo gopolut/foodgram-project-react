@@ -76,6 +76,15 @@ REST_FRAMEWORK = {
     ]
 }
 
+
+Djoser = {
+    'SERIALIZERS': {
+        'user': 'api.serializers.CustomUserSerializer',
+        'user_create': 'api.serializers.CreateUserSerializer',
+    }
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
