@@ -87,12 +87,6 @@ class CustomUserViewSet(UserViewSet):
     ...
     http_method_names = ['get', 'post']
     
-    # @action(['post'], detail=True) 
-    # def represent(request):
-    #     queryset = User.objects.order_by('-id')
-    #     serializer = CreateUserSerializer(queryset)
-    #     return Response(serializer.data)
-
     def create(self, request, *args, **kwargs):
 
         # serializer = self.get_serializer(data=request.data) # так не отображаются в Response все поля         
@@ -105,19 +99,11 @@ class CustomUserViewSet(UserViewSet):
         return Response(serializer.data)
 
 
-    # def list(self, request, *args, **kwargs):
-    #     # context = {'request': request}
-    #     # serializer = CustomUserSerializer(data=request.data, context=context)
-    #     # serializer = self.get_serializer(data=request.data)
-    #     # return Response(serializer.data)
-        
-    #     serializer = self.get_serializer(data=request.data)
-    #     user = self.request.user
-    #     new_queryset = User.objects.all()
-    #     return Response(new_queryset)
-   
-    # # @action(['post'], detail=False)
-    # # def set_password(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs):
+        context = {'request': request}
+        queryset = User.objects.all()
+        serializer = CustomUserSerializer(queryset, context=context, many=True)
+        return Response(serializer.data)
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
