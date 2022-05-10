@@ -15,6 +15,7 @@ from djoser.serializers import UserCreateSerializer
 
 User = get_user_model()
 
+
 class CreateUserSerializer(UserCreateSerializer):
 
     class Meta:

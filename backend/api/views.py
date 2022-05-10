@@ -1,5 +1,7 @@
+from lib2to3.pgen2 import token
 from math import degrees
 from django import views
+from django.conf import settings
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
@@ -35,6 +37,9 @@ from .permissions import IsAuthorOrReadOnly
 from .viewsets import FavoritedShoppingCartViewSet
 
 from djoser.views import UserViewSet, TokenCreateView, TokenDestroyView
+from djoser import utils
+from djoser.conf import settings as djoser_settings
+
 
 User = get_user_model()
 
@@ -107,6 +112,28 @@ class CustomUserViewSet(UserViewSet):
     #     queryset = User.objects.get(pk=user.id)
     #     serializer = CustomUserSerializer(queryset, context=context)
     #     return Response(serializer.data)
+
+    # def set_password(self, request, *args, **kwargs):
+    #     ...
+
+class CustomTokenCreateView(TokenCreateView):
+    '''Для получения статуса 201'''
+
+    def _action(self, serializer):
+        token = utils.login_user(self.request, serializer.user)
+        token_serializer_class = djoser_settings.SERIALIZERS.token
+        return Response(
+            data=token_serializer_class(token).data,
+            status=status.HTTP_201_CREATED
+        )
+
+
+# class CustomDeleteTokenView(TokenDestroyView):
+#     '''Для получения статуса 201'''
+
+#     def post(self, request):
+#         utils.logout_user(request)
+#         return Response(status=status.HTTP_201_CREATED)
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
