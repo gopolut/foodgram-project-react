@@ -1,42 +1,35 @@
-from lib2to3.pgen2 import token
-from math import degrees
 from django import views
 from django.conf import settings
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
-from requests import delete
+
 
 from rest_framework import status
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 
 from rest_framework.response import Response
 from django.http import Http404
 
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework import permissions
 
-from rest_framework.decorators import api_view
-# from rest_framework.views import APIView
-from rest_framework import viewsets, views
+from rest_framework.views import APIView
+from rest_framework import viewsets
 
 from recipes.models import Ingredient, Recipe, Tag, ShoppingCart, Favorited, Follow
 from .serializers import (SubscriptionsSerializer, IngredientSerializer,
                           RecipeSerializer, RecipeWriteSerializer,
                           TagSerializer, ShoppingCartSerializer,
-                          FavoritedSerializer, FollowSerializer,
-                          CreateUserSerializer, CustomUserSerializer)
+                          FavoritedSerializer, FollowSerializer,)
 
 from .permissions import IsAuthorOrReadOnly
-from .viewsets import FavoritedShoppingCartViewSet
+from .paginations import CustomPaginator
 
-from djoser.views import UserViewSet, TokenCreateView, TokenDestroyView
+from djoser.views import UserViewSet, TokenCreateView
 from djoser import utils
 from djoser.conf import settings as djoser_settings
 
@@ -89,6 +82,7 @@ User = get_user_model()
 
 
 class CustomUserViewSet(UserViewSet):
+    pagination_class = CustomPaginator
     ...
     http_method_names = ['get', 'post']
     
@@ -150,6 +144,7 @@ class TagViewSet(viewsets.ModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
+    pagination_class = CustomPaginator
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     
@@ -162,7 +157,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return RecipeWriteSerializer
 
 
-class ShoppingCartView(views.APIView):
+class ShoppingCartView(APIView):
     # -----------------------Эти методы для ViewSet:-----------------------------------
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     # serializer_class = ShoppingCartSerializer
@@ -203,7 +198,7 @@ class ShoppingCartView(views.APIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
-class FavoritedView(views.APIView):
+class FavoritedView(APIView):
         
     def post(self, request, id):
         data = {
@@ -233,7 +228,7 @@ class FavoritedView(views.APIView):
         )
 
 
-class DownloadShoppingCartView(views.APIView):
+class DownloadShoppingCartView(APIView):
     
     def get(self, request):
         user = request.user
@@ -261,7 +256,7 @@ class DownloadShoppingCartView(views.APIView):
         return response
 
 
-class FollowingView(views.APIView):
+class FollowingView(APIView):
 
     def get_queryset(self):
         return Follow.objects.all()
@@ -296,6 +291,7 @@ class FollowingView(views.APIView):
 
 class SubscriptionsViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
+    pagination_class = CustomPaginator
     serializer_class = SubscriptionsSerializer
     http_method_names = ['get']
     

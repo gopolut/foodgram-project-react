@@ -1,10 +1,7 @@
 from django.urls import include, path
-from django.conf.urls import url
-from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.routers import DefaultRouter
-from django.views.decorators.csrf import csrf_exempt
 from . import views
-from djoser.views import TokenCreateView, TokenDestroyView
+from djoser.views import TokenDestroyView
 
 app_name = 'api'
 
