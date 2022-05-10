@@ -87,22 +87,26 @@ class CustomUserViewSet(UserViewSet):
     ...
     http_method_names = ['get', 'post']
     
-    def create(self, request, *args, **kwargs):
+    # def create(self, request, *args, **kwargs):
+    #     # serializer = self.get_serializer(data=request.data) # так не отображаются в Response все поля         
+    #     context = {'request': request}
+    #     serializer = CreateUserSerializer(data=request.data, context=context)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save() 
+    #     return Response(serializer.data)
 
-        # serializer = self.get_serializer(data=request.data) # так не отображаются в Response все поля         
-        
-        context = {'request': request}
-        serializer = CreateUserSerializer(data=request.data, context=context)
-    
-        serializer.is_valid(raise_exception=True)
-        serializer.save() 
-        return Response(serializer.data)
+    # def list(self, request, *args, **kwargs):
+    #     context = {'request': request}
+    #     queryset = User.objects.all()
+    #     serializer = CustomUserSerializer(queryset, context=context, many=True)
+    #     return Response(serializer.data)
 
-    def list(self, request, *args, **kwargs):
-        context = {'request': request}
-        queryset = User.objects.all()
-        serializer = CustomUserSerializer(queryset, context=context, many=True)
-        return Response(serializer.data)
+    # def retrieve(self, request, *args, **kwargs):
+    #     user = get_object_or_404(User, id=self.kwargs.get('id'))     
+    #     context = {'request': request}
+    #     queryset = User.objects.get(pk=user.id)
+    #     serializer = CustomUserSerializer(queryset, context=context)
+    #     return Response(serializer.data)
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
