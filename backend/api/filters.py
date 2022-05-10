@@ -5,7 +5,7 @@ from recipes.models import Ingredient, Recipe
 
 class RecipeFilter(rest_framework.FilterSet):
     '''
-    Filters recipes againts tags and author
+
     '''
     tags = rest_framework.filters.AllValuesMultipleFilter(field_name='tags__slug')
 
