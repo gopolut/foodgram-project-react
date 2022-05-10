@@ -98,7 +98,6 @@ class CustomUserViewSet(UserViewSet):
         serializer.save() 
         return Response(serializer.data)
 
-
     def list(self, request, *args, **kwargs):
         context = {'request': request}
         queryset = User.objects.all()
