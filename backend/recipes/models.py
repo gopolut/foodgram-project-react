@@ -1,5 +1,5 @@
 from django.db import models
-
+from colorfield.fields import ColorField
 from users.models import CustomUser
 
 
@@ -37,10 +37,9 @@ class Tag(models.Model):
         verbose_name='Название тега',
         choices=TAG_CHOICES,
     )
-    color = models.CharField(
-        max_length=7,
-        choices=COLOR_CHOICES,
-        verbose_name='Цвет тега'
+    color = ColorField(
+        verbose_name='Цветовой HEX-код',
+        unique=True
     )
     slug = models.SlugField(
         unique=True,

@@ -17,8 +17,11 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework import permissions
 
+from django_filters.rest_framework.backends import DjangoFilterBackend
+
 from rest_framework.views import APIView
 from rest_framework import viewsets
+
 
 from recipes.models import Ingredient, Recipe, Tag, ShoppingCart, Favorited, Follow
 from .serializers import (SubscriptionsSerializer, IngredientSerializer,
@@ -28,6 +31,7 @@ from .serializers import (SubscriptionsSerializer, IngredientSerializer,
 
 from .permissions import IsAuthorOrReadOnly
 from .paginations import CustomPaginator
+from .filters import IngredientFilter, RecipeFilter
 
 from djoser.views import UserViewSet, TokenCreateView
 from djoser import utils
@@ -132,6 +136,8 @@ class CustomTokenCreateView(TokenCreateView):
 
 class IngredientViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
+    filterset_class = RecipeFilter
+    filter_backends = (DjangoFilterBackend,)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
 
@@ -145,6 +151,8 @@ class TagViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     pagination_class = CustomPaginator
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = IngredientFilter
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     
