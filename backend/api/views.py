@@ -18,6 +18,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import permissions
 
 from django_filters.rest_framework.backends import DjangoFilterBackend
+from django.contrib.auth import update_session_auth_hash
 
 from rest_framework.views import APIView
 from rest_framework import viewsets
@@ -35,6 +36,7 @@ from .filters import IngredientFilter, RecipeFilter
 
 from djoser.views import UserViewSet, TokenCreateView
 from djoser import utils
+from djoser.compat import get_user_email
 from djoser.conf import settings as djoser_settings
 
 
@@ -86,10 +88,30 @@ User = get_user_model()
 
 
 class CustomUserViewSet(UserViewSet):
-    pagination_class = CustomPaginator
-    ...
+
     http_method_names = ['get', 'post']
-    
+
+    @action(['post'], detail=False)
+    def set_password(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        self.request.user.set_password(serializer.validated_data["new_password"])
+        self.request.user.save()
+
+        if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
+            context = {"user": self.request.user}
+            to = [get_user_email(self.request.user)]
+            settings.EMAIL.password_changed_confirmation(
+                self.request, context).send(to)
+
+        if settings.LOGOUT_ON_PASSWORD_CHANGE:
+            utils.logout_user(self.request)
+        elif settings.CREATE_SESSION_ON_LOGIN:
+            update_session_auth_hash(self.request, self.request.user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
     # def create(self, request, *args, **kwargs):
     #     # serializer = self.get_serializer(data=request.data) # так не отображаются в Response все поля         
     #     context = {'request': request}
@@ -136,7 +158,7 @@ class CustomTokenCreateView(TokenCreateView):
 
 class IngredientViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
-    filterset_class = RecipeFilter
+    filterset_class = IngredientFilter
     filter_backends = (DjangoFilterBackend,)
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
@@ -152,10 +174,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly)
     pagination_class = CustomPaginator
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = IngredientFilter
+    filterset_class = RecipeFilter
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
     
@@ -242,9 +265,10 @@ class DownloadShoppingCartView(APIView):
         user = request.user
 
         shopping_list = user.buyer.values(
-            'recipe__ingredients__name', 'recipe__ingredients__measurement_unit'
+            'recipe__ingredients__name',
+            'recipe__ingredients__measurement_unit'
             ).annotate(
-                sum=Sum('recipe__ingredient__amount')
+                sum=Sum('recipe__recipe_ingredient__amount')
                 )
 
         print_list = []
@@ -259,8 +283,8 @@ class DownloadShoppingCartView(APIView):
             
             print_list.append(total_ingredient)
             
-        response = HttpResponse(print_list, 'Content-Type: application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="shopping_list"'
+        response = HttpResponse(print_list, 'Content-Type: text/html')
+        response['Content-Disposition'] = 'attachment; filename="shopping_list.txt"'
         return response
 
 

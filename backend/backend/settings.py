@@ -7,12 +7,13 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.environ.get(
-    'SECRET_KEY'
+    'SECRET_KEY',
+    default='!o0$syb^508x#m=(p_@sjr%!0_0h&#s$s4y80i*n%fhng&+eq0'
 )
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
@@ -49,6 +50,14 @@ MIDDLEWARE = [
 AUTH_USER_MODEL = 'users.CustomUser'
 
 ROOT_URLCONF = 'backend.urls'
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 TEMPLATES = [
     {
@@ -100,8 +109,11 @@ DJOSER = {
 #     }
 # }
 
+
+
 DATABASES = {
     'default': {
+        
         'ENGINE': os.environ.get(
             'DB_ENGINE',
             # default='django.db.backends.postgresql'
@@ -116,11 +128,11 @@ DATABASES = {
         ),
         'PASSWORD': os.environ.get(
             'POSTGRES_PASSWORD',
-            # default='qwerty55'
+            # default='postgres'
         ),
         'HOST': os.environ.get(
             'DB_HOST',
-            # default='localhost'
+            # default='db'
         ),
         'PORT': os.environ.get(
             'DB_PORT',

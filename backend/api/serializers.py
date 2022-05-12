@@ -6,6 +6,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.relations import SlugRelatedField
 from django.shortcuts import get_object_or_404
+from drf_extra_fields.fields import Base64ImageField
 
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Favorited, ShoppingCart, Tag, TagRecipe, Follow
 
@@ -75,8 +76,8 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    name = serializers.CharField()
-    measurement_unit = serializers.CharField()
+    # name = serializers.CharField()
+    # measurement_unit = serializers.CharField()
     
     class Meta:
         fields = (
@@ -85,21 +86,28 @@ class IngredientSerializer(serializers.ModelSerializer):
             'measurement_unit',
         )
         model = Ingredient
-        lookup_field = 'id'
+        # lookup_field = 'id'
 
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 class IngredientWriteSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     amount = serializers.IntegerField()
-
+    
+    # id = serializers.ReadOnlyField(source='ingredient.id')
+    # name = serializers.ReadOnlyField(source='ingredient.name')
+    # measurement_unit = serializers.ReadOnlyField(
+    #     source='ingredient.measurement_unit')
+    
     class Meta:
-        model = Ingredient
         fields = (
             'id',
+            # 'name',
+            # 'measurement_unit',
             'amount',
         )
-
-
+        # model = RecipeIngredient
+        model = Ingredient
 class TagSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -110,7 +118,7 @@ class TagSerializer(serializers.ModelSerializer):
             'slug',
         )
         model = Tag
-        lookup_field = 'id'
+        # lookup_field = 'id'
 
 
 class TagRecipeSerializer(serializers.ModelSerializer):
@@ -129,7 +137,7 @@ class TagRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    tags = serializers.SerializerMethodField()
+    tags = TagSerializer(many=True)
     ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -154,12 +162,12 @@ class RecipeSerializer(serializers.ModelSerializer):
     def get_tags(self, obj):
         queryset = TagRecipe.objects.filter(recipe=obj)
         return TagRecipeSerializer(queryset, many=True).data
-    
+
     def get_ingredients(self, obj):
         # print('context: ', self)
         queryset = RecipeIngredient.objects.filter(recipe=obj)
         return RecipeIngredientSerializer(queryset, many=True).data
-    
+
     def get_is_favorited(self, obj):
         print('context: ', self)
         request = self.context.get('request')
@@ -183,13 +191,22 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
+    image = Base64ImageField(max_length=None, use_url=True)
+
     # ingredients = SlugRelatedField(
     #     slug_field='id',
     #     queryset=Ingredient.objects.all(),
     #     many=True
     # )
 
+    # ingredients = IngredientWriteSerializer(
+    #     many=True,
+    #     read_only=True,
+    #     source='recipe_ingredient')
+
     ingredients = IngredientWriteSerializer(many=True)
+
+    cooking_time = serializers.IntegerField()
 
    
     class Meta:
@@ -258,14 +275,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         instance.tags.set(tags)
         return super().update(instance, validated_data)
-
-    def to_representation(self, instance):
-        return RecipeSerializer(
-            instance,
-            context={'request': self.context.get('request')}
-        ).data
-
-    
+   
     def validate_tags(self, data):
         # print('data_id:__', data)
         # print('self.instance:__', self.instance.id)
@@ -316,10 +326,15 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             })
 
         # for element in data:    
-
         # print('____data: ', data[0]['id'])
         # print('____data: ', data[0]['amount'])
         return data
+
+    def to_representation(self, instance):
+        return RecipeSerializer(
+            instance,
+            context={'request': self.context.get('request')}
+        ).data
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
