@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from djoser.views import TokenDestroyView
+from djoser.views import TokenDestroyView, UserViewSet
 
 from . import views
 
@@ -11,7 +11,7 @@ router = DefaultRouter()
 
 router.register(
     r'users',
-    views.CustomUserViewSet,
+    UserViewSet,
     basename='users'
 )
 router.register(
@@ -66,7 +66,6 @@ urlpatterns = [
         r'users/subscriptions/',
         views.SubscriptionsViewSet.as_view({'get': 'list'}),
         name='subscriptions'
-     ),
+    ),
     path('', include(router.urls)),
-
 ]

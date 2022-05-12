@@ -1,17 +1,14 @@
-from django.conf import settings
-from django.contrib.auth import get_user_model, update_session_auth_hash
+from django.contrib.auth import get_user_model
 from django.db.models import Sum
-from django.http import HttpResponse
+from django.http.response import HttpResponse
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from djoser import utils
-from djoser.compat import get_user_email
 from djoser.conf import settings as djoser_settings
-from djoser.views import TokenCreateView, UserViewSet
+from djoser.views import TokenCreateView
 
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import CustomPaginator
@@ -24,36 +21,6 @@ from recipes.models import (Favorited, Follow, Ingredient, Recipe,
                             ShoppingCart, Tag)
 
 User = get_user_model()
-
-
-class CustomUserViewSet(UserViewSet):
-    permission_classes = (
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrReadOnly
-    )
-    http_method_names = ['get', 'post']
-
-    @action(['post'], detail=False)
-    def set_password(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        self.request.user.set_password(
-            serializer.validated_data['new_password']
-        )
-        self.request.user.save()
-
-        if settings.PASSWORD_CHANGED_EMAIL_CONFIRMATION:
-            context = {"user": self.request.user}
-            to = [get_user_email(self.request.user)]
-            settings.EMAIL.password_changed_confirmation(
-                self.request, context).send(to)
-
-        if settings.LOGOUT_ON_PASSWORD_CHANGE:
-            utils.logout_user(self.request)
-        elif settings.CREATE_SESSION_ON_LOGIN:
-            update_session_auth_hash(self.request, self.request.user)
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CustomTokenCreateView(TokenCreateView):
@@ -188,10 +155,9 @@ class DownloadShoppingCartView(APIView):
 
         response = HttpResponse(
             print_list,
-            'Content-Type: application/pdf'
+            'Content-Type: text/html; charset=utf-8'
         )
-        # response = HttpResponse(print_list, content_type=text)
-        content_disposition = 'attachment; filename="shopping_list.pdf"'
+        content_disposition = 'attachment; filename="shopping_list.txt"'
         response['Content-Disposition'] = content_disposition
         return response
 
