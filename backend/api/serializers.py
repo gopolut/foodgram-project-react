@@ -28,7 +28,6 @@ class CreateUserSerializer(UserCreateSerializer):
         read_only_fields = (
             'id',
         )
-
         model = User
 
 
@@ -64,7 +63,6 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
-
     )
 
     class Meta:
@@ -116,7 +114,6 @@ class TagSerializer(serializers.ModelSerializer):
             'slug',
         )
         model = Tag
-        # lookup_field = 'id'
 
 
 class TagRecipeSerializer(serializers.ModelSerializer):

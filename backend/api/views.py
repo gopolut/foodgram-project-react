@@ -60,7 +60,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = CustomPaginator
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    queryset = Recipe.objects.all().order_by('-pub_date')
+    queryset = Recipe.objects.all()
     serializer_class = RecipeReadSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 

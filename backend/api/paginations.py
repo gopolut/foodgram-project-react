@@ -5,4 +5,4 @@ class CustomPaginator(PageNumberPagination):
     '''Кастомный пагинатор'''
 
     page_size_query_param = 'limit'
-    page_size = 3
+    page_size = 5
