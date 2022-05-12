@@ -93,7 +93,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = CustomPaginator
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by('-pub_date')
     serializer_class = RecipeReadSerializer
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
@@ -188,10 +188,10 @@ class DownloadShoppingCartView(APIView):
 
         response = HttpResponse(
             print_list,
-            'Content-Type: text/html; charset=utf-8'
+            'Content-Type: application/pdf'
         )
         # response = HttpResponse(print_list, content_type=text)
-        content_disposition = 'attachment; filename="shopping_list.txt"'
+        content_disposition = 'attachment; filename="shopping_list.pdf"'
         response['Content-Disposition'] = content_disposition
         return response
 
