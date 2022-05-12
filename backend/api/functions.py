@@ -7,6 +7,7 @@ def calculate_ingredients(ingredients, recipe):
     '''
     Метод добавляет ингрединты в БД
     '''
+
     for ingredient in ingredients:
         obj = get_object_or_404(Ingredient, id=ingredient['id'])
         amount = ingredient['amount']

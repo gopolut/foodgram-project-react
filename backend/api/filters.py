@@ -4,10 +4,11 @@ from recipes.models import Ingredient, Recipe
 
 
 class RecipeFilter(rest_framework.FilterSet):
-    '''
+    '''Фильтр по рецептам'''
 
-    '''
-    tags = rest_framework.filters.AllValuesMultipleFilter(field_name='tags__slug')
+    tags = rest_framework.filters.AllValuesMultipleFilter(
+        field_name='tags__slug'
+    )
 
     class Meta:
         fields = ('author',)
@@ -22,13 +23,18 @@ class RecipeFilter(rest_framework.FilterSet):
         if self.request.query_params.get('is_in_shopping_cart') in [
             '1', 'true', 'True'
         ]:
+
             queryset = queryset.filter(recipes_shop__user=self.request.user)
         return queryset
 
 
 class IngredientFilter(rest_framework.FilterSet):
-    '''    '''
-    name = rest_framework.filters.CharFilter(field_name='name', lookup_expr='istartswith')
+    '''Филтр по ингредиентам'''
+
+    name = rest_framework.filters.CharFilter(
+        field_name='name',
+        lookup_expr='istartswith'
+    )
 
     class Meta:
         fields = ('name',)

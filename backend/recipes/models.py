@@ -3,19 +3,13 @@ from colorfield.fields import ColorField
 from users.models import CustomUser
 
 
-COLOR_CHOICES =(
-    ('#E26C2D', 'Оранжевый'),
-    ('#00ff00', 'Зеленый'),
-    ('#3b2fff', 'Синий'),
-    ('#540099', 'Фиолетовый')
-)
-
 TAG_CHOICES =(
     ('breakfast', 'Завтрак'),
     ('lunch', 'Ланч'),
     ('dinner', 'Обед'),
     ('supper', 'Ужин'),
 )
+
 
 class Ingredient(models.Model):
     name = models.CharField(
@@ -27,6 +21,10 @@ class Ingredient(models.Model):
         max_length=50,
         verbose_name='Единица измерения'        
     )
+    
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
         return self.name
@@ -47,7 +45,11 @@ class Tag(models.Model):
         default='-пусто-',
         verbose_name='URL тега'
     )
-    
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+
     def __str__(self):
         return self.name
 
@@ -86,12 +88,16 @@ class Recipe(models.Model):
         through='TagRecipe'
     )
     
+    class Meta:
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+    
     def __str__(self):
         return self.name
 
     def favorited_count(self):
-        '''
-        '''
+        '''Для вывода количества добавленных рецептов в избранное'''
+
         return self.recipes_fav.count()
 
     favorited_count.short_description = 'Число добавлений в избранное'
@@ -150,6 +156,9 @@ class Favorited(models.Model):
     )
 
     class Meta:
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранное'
+
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
@@ -178,6 +187,9 @@ class ShoppingCart(models.Model):
     )
     
     class Meta:
+        verbose_name = 'Корзина с покупками'
+        verbose_name_plural = 'Корзина с покупками'
+
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
@@ -206,6 +218,9 @@ class Follow(models.Model):
     )
 
     class Meta:
+        verbose_name = 'Подписчики'
+        verbose_name_plural = 'Подписчики'
+
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'author'],

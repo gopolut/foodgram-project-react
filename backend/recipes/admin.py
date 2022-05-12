@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Recipe, Ingredient, Tag, Follow, RecipeIngredient, TAG_CHOICES
+from .models import Recipe, Ingredient, Tag, Follow, TAG_CHOICES
 
 
 class InlineIngredient(admin.TabularInline):
@@ -145,16 +145,16 @@ class IngredientAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-@admin.register(RecipeIngredient)
-class RecipeIngredientAdmin(admin.ModelAdmin):
-    '''Редактор модели RecipeIngredient'''
+# @admin.register(RecipeIngredient)
+# class RecipeIngredientAdmin(admin.ModelAdmin):
+#     '''Редактор модели RecipeIngredient'''
 
-    list_display = (
-        'pk',
-        'recipe',
-        'ingredient',
-        'amount',
-    )
+#     list_display = (
+#         'pk',
+#         'recipe',
+#         'ingredient',
+#         'amount',
+#     )
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -166,6 +166,12 @@ class TagAdmin(admin.ModelAdmin):
         'color',
         'slug',
     )
+
+    list_display_links = (
+        'pk',
+        'name',
+    )
+
 
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
