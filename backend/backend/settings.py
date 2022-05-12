@@ -73,7 +73,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated', 
+        'rest_framework.permissions.IsAuthenticated',
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -93,7 +93,7 @@ DJOSER = {
 
 DATABASES = {
     'default': {
-        
+
         'ENGINE': os.environ.get(
             'DB_ENGINE',
             # default='django.db.backends.postgresql'

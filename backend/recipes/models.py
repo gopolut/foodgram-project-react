@@ -1,9 +1,10 @@
 from django.db import models
+
 from colorfield.fields import ColorField
+
 from users.models import CustomUser
 
-
-TAG_CHOICES =(
+TAG_CHOICES = (
     ('breakfast', 'Завтрак'),
     ('lunch', 'Ланч'),
     ('dinner', 'Обед'),
@@ -19,9 +20,9 @@ class Ingredient(models.Model):
     )
     measurement_unit = models.CharField(
         max_length=50,
-        verbose_name='Единица измерения'        
+        verbose_name='Единица измерения'
     )
-    
+
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
@@ -69,7 +70,6 @@ class Recipe(models.Model):
     image = models.ImageField(
         'Картинка',
         upload_to='recipes/',
-        blank=True           # TODO: можно заносить Null для отладки, потом исправить
     )
     text = models.TextField(
         verbose_name='Описание рецепта',
@@ -87,16 +87,16 @@ class Recipe(models.Model):
         Tag,
         through='TagRecipe'
     )
-    
+
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-    
+
     def __str__(self):
         return self.name
 
     def favorited_count(self):
-        '''Для вывода количества добавленных рецептов в избранное'''
+        '''Для вывода в админке количества добавленных рецептов в избранное'''
 
         return self.recipes_fav.count()
 
@@ -129,10 +129,10 @@ class TagRecipe(models.Model):
         verbose_name='Название тега'
     )
     recipe = models.ForeignKey(
-       Recipe,
-       on_delete=models.CASCADE,
-       related_name='recipe_tag',
-       verbose_name='Название рецепта'
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe_tag',
+        verbose_name='Название рецепта'
     )
 
     def __str__(self):
@@ -185,7 +185,7 @@ class ShoppingCart(models.Model):
         verbose_name='Название рецепта',
         null=True,
     )
-    
+
     class Meta:
         verbose_name = 'Корзина с покупками'
         verbose_name_plural = 'Корзина с покупками'
