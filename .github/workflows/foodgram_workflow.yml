@@ -88,8 +88,8 @@ jobs:
           sudo docker pull gopolut/frontend:latest
           sudo docker-compose stop
           sudo docker-compose rm backend
-
-          cd Dev/backend/
+          ls -la
+          # cd Dev/backend/
           touch .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
