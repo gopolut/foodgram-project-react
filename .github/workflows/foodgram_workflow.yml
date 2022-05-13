@@ -84,11 +84,12 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          cd Dev/infra/
           sudo docker pull gopolut/foodgram:latest
           sudo docker pull gopolut/frontend:latest
           sudo docker-compose stop
           sudo docker-compose rm backend
+
+          cd Dev/infra/
 
           touch .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
