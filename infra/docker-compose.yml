@@ -1,19 +1,19 @@
 version: '3.3'
 services:
 
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+  
   frontend:
     image: gopolut/frontend:latest
     restart: always
     volumes:
       - ../frontend/:/app/result_build/
   
-  db:
-    image: postgres:13.0-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - ../backend/.env
-
   backend:
     image: gopolut/foodgram:latest
     restart: always
@@ -24,7 +24,7 @@ services:
     depends_on: 
       - db 
     env_file: 
-      - ../backend/.env
+      - ./.env
   
   nginx:
     image: nginx:1.19.3-alpine
