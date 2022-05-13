@@ -5,9 +5,14 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
     '''Кастомный пермишен,
     который позволяет автору редактировать его контент.
     '''
+    def has_permission(self, request, view):
+        return (request.method in permissions.SAFE_METHODS
+                or request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        return obj.author == request.user
+        return (
+            request.method in permissions.SAFE_METHODS or (
+                request.user.is_authenticated
+                and (obj.author == request.user or request.user.is_superuser)
+            )
+        )

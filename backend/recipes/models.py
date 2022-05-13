@@ -4,12 +4,12 @@ from colorfield.fields import ColorField
 
 from users.models import CustomUser
 
-TAG_CHOICES = (
-    ('breakfast', 'Завтрак'),
-    ('lunch', 'Ланч'),
-    ('dinner', 'Обед'),
-    ('supper', 'Ужин'),
-)
+# TAGS = (
+#     ('Завтрак', 'breakfast', '#E26C2D'),
+#     ('Ланч', 'lunch', '#00ff00'),
+#     ('Обед', 'dinner', '#3b2fff'),
+#     ('Ужин', 'supper', '#8100EA'),
+# )
 
 
 class Ingredient(models.Model):
@@ -35,7 +35,7 @@ class Tag(models.Model):
     name = models.CharField(
         max_length=200,
         verbose_name='Название тега',
-        choices=TAG_CHOICES,
+        # choices=TAG_CHOICES,
     )
     color = ColorField(
         verbose_name='Цветовой HEX-код',

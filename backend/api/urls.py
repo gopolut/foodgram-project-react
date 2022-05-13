@@ -10,22 +10,22 @@ app_name = 'api'
 router = DefaultRouter()
 
 router.register(
-    r'users',
+    'users',
     UserViewSet,
     basename='users'
 )
 router.register(
-    r'tags',
+    'tags',
     views.TagViewSet,
     basename='tags'
 )
 router.register(
-    r'recipes',
+    'recipes',
     views.RecipeViewSet,
     basename='recipes'
 )
 router.register(
-    r'ingredients',
+    'ingredients',
     views.IngredientViewSet,
     basename='ingredients'
 )
@@ -33,37 +33,37 @@ router.register(
 
 urlpatterns = [
     path(
-        r'recipes/download_shopping_cart/',
+        'recipes/download_shopping_cart/',
         views.DownloadShoppingCartView.as_view(),
         name='shopping_cart'
     ),
     path(
-        r'recipes/<int:id>/shopping_cart/',
+        'recipes/<int:id>/shopping_cart/',
         views.ShoppingCartView.as_view(),
         name='shopping_cart'
     ),
     path(
-        r'recipes/<int:id>/favorite/',
+        'recipes/<int:id>/favorite/',
         views.FavoritedView.as_view(),
         name='favorited'
     ),
     path(
-        r'users/<int:id>/subscribe/',
+        'users/<int:id>/subscribe/',
         views.FollowingView.as_view(),
         name='following'
     ),
     path(
-        r'auth/token/login/',
+        'auth/token/login/',
         views.CustomTokenCreateView.as_view(),
         name='login'
     ),
     path(
-        r'auth/token/logout/',
+        'auth/token/logout/',
         TokenDestroyView.as_view(),
         name='logout'
     ),
     path(
-        r'users/subscriptions/',
+        'users/subscriptions/',
         views.SubscriptionsViewSet.as_view({'get': 'list'}),
         name='subscriptions'
     ),

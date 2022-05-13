@@ -10,7 +10,9 @@ from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (Favorited, Follow, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart, Tag, TagRecipe)
 
-User = get_user_model()
+from users.models import CustomUser
+
+# User = get_user_model()
 
 
 class CreateUserSerializer(UserCreateSerializer):
@@ -18,17 +20,12 @@ class CreateUserSerializer(UserCreateSerializer):
 
     class Meta:
         fields = (
-            'email',
-            'id',
-            'username',
-            'first_name',
-            'last_name',
-            'password',
+            '__all__'
         )
         read_only_fields = (
             'id',
         )
-        model = User
+        model = CustomUser
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -37,6 +34,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
+        # если заменить на __all__, то при GET /api/users/{id}/ появляется
+        # много лишних полей не предусмотренных т/з
         fields = (
             'email',
             'id',
@@ -45,7 +44,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'last_name',
             'is_subscribed',
         )
-        model = User
+        model = CustomUser
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
@@ -144,16 +143,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'id',
-            'tags',
-            'author',
-            'ingredients',
-            'is_favorited',
-            'is_in_shopping_cart',
-            'name',
-            'image',
-            'text',
-            'cooking_time',
+            '__all__'
         )
         model = Recipe
 
@@ -167,20 +157,21 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
-
-        if not request or request.user.is_anonymous:
-            return False
-        return Favorited.objects.filter(
-            user=request.user, recipe=obj
-        ).exists()
+        return(
+            not request.user.is_anonymous
+            and Favorited.objects.filter( 
+                user=request.user, recipe=obj 
+            ).exists()
+        )
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return ShoppingCart.objects.filter(
-            user=request.user, recipe=obj
-        ).exists()
+        return(
+            not request.user.is_anonymous
+            and ShoppingCart.objects.filter(
+                user=request.user, recipe=obj
+            ).exists()
+        )
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -197,13 +188,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            'tags',
-            'author',
-            'ingredients',
-            'name',
-            'image',
-            'text',
-            'cooking_time',
+            '__all__'
         )
         model = Recipe
 
@@ -389,6 +374,8 @@ class SubscribersReadSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
+        # если заменить на __all__-
+        # ругается на отсутсвие поля recipes, is_subscribed, is_subscribed
         fields = (
             'email',
             'id',
@@ -399,19 +386,20 @@ class SubscribersReadSerializer(serializers.ModelSerializer):
             'recipes',
             'recipes_count',
         )
-        model = User
+        model = CustomUser
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return Follow.objects.filter(
-            user=obj,
-            author=request.user,
-        ).exists()
+        return(
+            not request.user.is_anonymous
+            and Follow.objects.filter(
+                user=obj,
+                author=request.user,
+            ).exists()
+        )
 
     def get_recipes(self, obj):
         request = self.context.get('request')

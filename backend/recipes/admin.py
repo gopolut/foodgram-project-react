@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import TAG_CHOICES, Follow, Ingredient, Recipe, Tag
+from .models import Follow, Ingredient, Recipe, Tag
+
+TAG_CHOICES = (
+    ('breakfast', 'Завтрак'),
+    ('lunch', 'Ланч'),
+    ('dinner', 'Обед'),
+    ('supper', 'Ужин'),
+)
 
 
 class InlineIngredient(admin.TabularInline):
