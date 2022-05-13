@@ -11,8 +11,6 @@ from recipes.models import (Favorited, Follow, Ingredient, Recipe,
 
 from users.models import CustomUser
 
-# User = get_user_model()
-
 
 class CreateUserSerializer(UserCreateSerializer):
     '''Кастомный сериализатор для регистрации пользователя.'''
