@@ -88,6 +88,8 @@ jobs:
           sudo docker pull gopolut/frontend:latest
           sudo docker-compose stop
           sudo docker-compose rm backend
+          
+          cd Dev/
           ls -la
           # cd Dev/backend/
           touch .env
