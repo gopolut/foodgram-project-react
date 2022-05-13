@@ -3,7 +3,6 @@ services:
 
   frontend:
     image: gopolut/frontend:latest
-    build: ../frontend
     restart: always
     volumes:
       - ../frontend/:/app/result_build/
@@ -17,7 +16,6 @@ services:
 
   backend:
     image: gopolut/foodgram:latest
-    build: ../backend
     restart: always
     volumes: 
       - static_value:/app/static/
