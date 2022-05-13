@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.forms import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
@@ -159,8 +158,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         return(
             not request.user.is_anonymous
-            and Favorited.objects.filter( 
-                user=request.user, recipe=obj 
+            and Favorited.objects.filter(
+                user=request.user, recipe=obj
             ).exists()
         )
 
