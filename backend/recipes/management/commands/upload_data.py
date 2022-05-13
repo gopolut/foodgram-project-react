@@ -4,7 +4,6 @@ from django.core.management.base import BaseCommand
 
 from recipes.models import Ingredient, Tag
 
-
 TAGS = (
     ('Завтрак', 'breakfast', '#E26C2D'),
     ('Ланч', 'lunch', '#00ff00'),

@@ -8,7 +8,6 @@ from drf_extra_fields.fields import Base64ImageField
 
 from recipes.models import (Favorited, Follow, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart, Tag, TagRecipe)
-
 from users.models import CustomUser
 
 
