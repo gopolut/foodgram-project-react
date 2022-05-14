@@ -1,6 +1,6 @@
 ![size](https://img.shields.io/github/languages/code-size/gopolut/foodgram-project-react)
 ![django version](https://img.shields.io/pypi/pyversions/Django)
-![Django-app workflow](https://github.com/gopolut/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
+![Django-app workflow](https://github.com/gopolut/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 # Документация к API дипломного проекта Foodgram (v1)
 
