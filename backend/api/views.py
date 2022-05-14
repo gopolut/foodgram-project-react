@@ -12,6 +12,7 @@ from djoser.views import TokenCreateView
 
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import CustomPaginator
+from .pdf_ import pdf_create
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoritedSerializer, FollowSerializer,
                           IngredientSerializer, RecipeReadSerializer,
@@ -144,6 +145,10 @@ class DownloadShoppingCartView(APIView):
             sum=Sum('recipe__recipe_ingredient__amount')
         )
 
+        response = HttpResponse(content_type='application/pdf')
+        content_disposition = 'attachment; filename="shopping_list.pdf"'
+        response['Content-Disposition'] = content_disposition
+
         print_list = []
         for element in shopping_list:
             ingredient = element.get('recipe__ingredients__name')
@@ -153,12 +158,8 @@ class DownloadShoppingCartView(APIView):
 
             print_list.append(total_ingredient)
 
-        response = HttpResponse(
-            print_list,
-            'Content-Type: text/html; charset=utf-8'
-        )
-        content_disposition = 'attachment; filename="shopping_list.txt"'
-        response['Content-Disposition'] = content_disposition
+        pdf_create(print_list)
+
         return response
 
 
