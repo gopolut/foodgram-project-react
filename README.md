@@ -13,13 +13,13 @@ REST API для проекта **Foodgram**. Социальная сеть дл�
 > Тестовые данные для проверки:
 
 + Администратор
-  + username: root
+  + username: **root**
   + password: **noclip2004**
 
 
 + Пользователь
-  + username: semen
-   +password: **qwerty34**
+  + username: **semen**
+  + password: **qwerty34**
 
 
 ## Содержание
