@@ -1,5 +1,5 @@
 from io import BytesIO
-import os
+
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http.response import HttpResponse
@@ -11,25 +11,21 @@ from rest_framework.views import APIView
 from djoser import utils
 from djoser.conf import settings as djoser_settings
 from djoser.views import TokenCreateView
-
-from .filters import IngredientFilter, RecipeFilter
-from .paginations import CustomPaginator
-from .permissions import IsAuthorOrReadOnly
-
-from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
+from .filters import IngredientFilter, RecipeFilter
+from .paginations import CustomPaginator
+from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoritedSerializer, FollowSerializer,
                           IngredientSerializer, RecipeReadSerializer,
                           RecipeWriteSerializer, ShoppingCartSerializer,
                           SubscribersReadSerializer, TagSerializer)
+from backend.settings import FONT_PATH
 from recipes.models import (Favorited, Follow, Ingredient, Recipe,
                             ShoppingCart, Tag)
-
-from backend.settings import FONT_PATH
 
 User = get_user_model()
 

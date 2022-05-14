@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 from io import BytesIO
+
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -15,9 +16,9 @@ def pdf_create(text):
     c = canvas.Canvas('shopping_list.pdf', pagesize=A4)
     pdfmetrics.registerFont(TTFont('FreeSans', path))
     c.setFont('FreeSans', 12)
-    
+
     buffer = BytesIO()
-    
+
     user = 'Пользователь'
 
     string_height = 750
@@ -27,13 +28,13 @@ def pdf_create(text):
     for line in text:
         c.drawString(50, string_height, line)
         string_height -= 30
-    
+
     c.showPage()
     c.save()
 
     pdf = buffer.getvalue()
     buffer.close()
-    
+
     # c.showPage()
     # c.save()
     return pdf
