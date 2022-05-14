@@ -11,7 +11,7 @@ from djoser.conf import settings as djoser_settings
 from djoser.views import TokenCreateView
 
 from .filters import IngredientFilter, RecipeFilter
-from .functions.pdf_ import pdf_create
+from .reportlab.pdf_ import pdf_create
 from .paginations import CustomPaginator
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoritedSerializer, FollowSerializer,
