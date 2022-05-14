@@ -6,6 +6,8 @@ load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+FONT_PATH = os.path.join(BASE_DIR, 'data', 'reportlab', 'FreeSans.ttf')
+
 SECRET_KEY = os.environ.get(
     'SECRET_KEY',
     default='!o0$syb^508x#m=(p_@sjr%!0_0h&#s$s4y80i*n%fhng&+eq0'

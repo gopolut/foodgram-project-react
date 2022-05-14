@@ -1,3 +1,5 @@
+from io import BytesIO
+import os
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http.response import HttpResponse
@@ -13,13 +15,21 @@ from djoser.views import TokenCreateView
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import CustomPaginator
 from .permissions import IsAuthorOrReadOnly
-from .reportlab.pdf_ import pdf_create
+
+from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+
 from .serializers import (FavoritedSerializer, FollowSerializer,
                           IngredientSerializer, RecipeReadSerializer,
                           RecipeWriteSerializer, ShoppingCartSerializer,
                           SubscribersReadSerializer, TagSerializer)
 from recipes.models import (Favorited, Follow, Ingredient, Recipe,
                             ShoppingCart, Tag)
+
+from backend.settings import FONT_PATH
 
 User = get_user_model()
 
@@ -137,17 +147,13 @@ class FavoritedView(APIView):
 
 class DownloadShoppingCartView(APIView):
 
-    def get(self, request):
+    def get(self, request, path=FONT_PATH):
         shopping_list = request.user.buyer.values(
             'recipe__ingredients__name',
             'recipe__ingredients__measurement_unit'
         ).annotate(
             sum=Sum('recipe__recipe_ingredient__amount')
         )
-
-        response = HttpResponse(content_type='application/pdf')
-        content_disposition = 'attachment; filename="shopping_list.pdf"'
-        response['Content-Disposition'] = content_disposition
 
         print_list = []
         for element in shopping_list:
@@ -158,7 +164,32 @@ class DownloadShoppingCartView(APIView):
 
             print_list.append(total_ingredient)
 
-        pdf_create(print_list)
+        response = HttpResponse(content_type='application/pdf')
+        content_disposition = 'attachment; filename="shopping_list.pdf"'
+        response['Content-Disposition'] = content_disposition
+
+        buffer = BytesIO()
+        pdf = canvas.Canvas(buffer, A4)
+
+        pdfmetrics.registerFont(TTFont('FreeSans', path))
+        pdf.setFont('FreeSans', 12)
+
+        string_height = 750
+
+        pdf.drawString(50, 800, 'Список ингредиентов')
+        pdf.drawString(400, 800, f'Пользователь: {request.user.username}')
+        pdf.line(0, 790, 800, 790)
+
+        for line in print_list:
+            pdf.drawString(50, string_height, line)
+            string_height -= 30
+
+        pdf.showPage()
+        pdf.save()
+
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
 
         return response
 
