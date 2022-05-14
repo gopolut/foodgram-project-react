@@ -4,13 +4,6 @@ from colorfield.fields import ColorField
 
 from users.models import CustomUser
 
-# TAGS = (
-#     ('Завтрак', 'breakfast', '#E26C2D'),
-#     ('Ланч', 'lunch', '#00ff00'),
-#     ('Обед', 'dinner', '#3b2fff'),
-#     ('Ужин', 'supper', '#8100EA'),
-# )
-
 
 class Ingredient(models.Model):
     name = models.CharField(
