@@ -154,7 +154,7 @@ class DownloadShoppingCartView(APIView):
             ingredient = element.get('recipe__ingredients__name')
             unit = element.get('recipe__ingredients__measurement_unit')
             sum = element.get('sum')
-            total_ingredient = f'{ingredient}, {unit}: {sum}\n'
+            total_ingredient = f'{ingredient}, {unit}: {sum}'
 
             print_list.append(total_ingredient)
 

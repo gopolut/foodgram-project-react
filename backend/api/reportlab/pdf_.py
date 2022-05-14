@@ -4,13 +4,17 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
+import os
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+path = os.path.join(BASE_DIR, 'reportlab', 'FreeSans.ttf')
 
 
 def pdf_create(text):
     c = canvas.Canvas('shopping_list.pdf', pagesize=A4)
-    pdfmetrics.registerFont(TTFont('TNR', 'times.ttf'))
-    c.setFont('TNR', 12)
-    c.getAvailableFonts()
+    pdfmetrics.registerFont(TTFont('FreeSans', path))
+    c.setFont('FreeSans', 12)
 
     user = 'Пользователь'
 
