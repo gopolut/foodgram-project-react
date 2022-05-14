@@ -1,4 +1,11 @@
 version: '3.3'
+
+volumes:
+  postgres_data:
+  static_value:
+  media_value:
+
+
 services:
 
   db:
@@ -10,12 +17,14 @@ services:
   
   frontend:
     image: gopolut/frontend:latest
+    build: ../frontend/
     restart: always
     volumes:
       - ../frontend/:/app/result_build/
   
   backend:
     image: gopolut/foodgram:latest
+    build: ../backend
     restart: always
     volumes: 
       - static_value:/app/static/
@@ -42,8 +51,3 @@ services:
     depends_on:
       - backend
       - frontend
-
-volumes:
-  postgres_data:
-  static_value:
-  media_value:
