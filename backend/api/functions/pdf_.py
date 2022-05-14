@@ -8,8 +8,8 @@ from reportlab.pdfgen import canvas
 
 def pdf_create(text):
     c = canvas.Canvas('shopping_list.pdf', pagesize=A4)
-    pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
-    c.setFont('FreeSans', 12)
+    pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
+    c.setFont('DejaVuSans', 12)
     user = 'Пользователь'
 
     string_height = 750

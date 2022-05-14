@@ -12,7 +12,7 @@ from djoser.views import TokenCreateView
 
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import CustomPaginator
-from .pdf_ import pdf_create
+from .functions.pdf_ import pdf_create
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoritedSerializer, FollowSerializer,
                           IngredientSerializer, RecipeReadSerializer,
