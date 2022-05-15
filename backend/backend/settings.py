@@ -89,6 +89,10 @@ DJOSER = {
         'user_create': 'api.serializers.CreateUserSerializer',
         'token_create': 'djoser.serializers.TokenCreateSerializer',
     },
+    'PERMISSIONS': {
+        'user_list': ('rest_framework.permissions.IsAuthenticated',),
+        'user': ('rest_framework.permissions.IsAuthenticated',)
+    },
     'LOGIN_FIELD': 'email',
 }
 
