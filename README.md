@@ -22,7 +22,7 @@ REST API для проекта **Foodgram**. Социальная сеть дл�
   + **username:** semen
   + **email:** semen@ya.ru  
   + **password:** qwerty34
-
+##
 
 ## Содержание
 1. [Описание](#description)
